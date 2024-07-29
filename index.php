@@ -5,7 +5,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico" />
     <meta name="Description" content="Point cloud Editor – Edit, Crop and Clear Point Clouds in Browser Tool - Panoton"/>
     <meta name="Keyword" content="Point cloud Editor, colmap, gaussian splatting, pointcloud, editor"/>
-    <meta name="author" content="PPoint cloud Editor in Browser"/>
+    <meta name="author" content="Point cloud Editor in Browser"/>
     <meta name="rating" CONTENT="General"/>
     <meta content="all" name="Googlebot-Image"/>
     <meta content="all" name="Slurp"/>
@@ -17,33 +17,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Point cloud Editor in Browser</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/FileSaver.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.138.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.138.0/examples/js/controls/OrbitControls.js"></script>
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
-
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="../../css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="../../css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="../../css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="../../css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="../../css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="../../css/style.css" type="text/css">
   <style>
     .settings > * {
       margin-top: 12px;
       margin-bottom: 12px;
     }
     #cubemap {
-      /* 
-      width: 805px;
-      height: 600px;
-      */
       position: relative;
       border: 2px solid #015DE4;
       background: #eee;
@@ -80,10 +59,70 @@
       margin: auto;
       padding: 10px;
     }
+    #loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 1000;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    #loading-spinner {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #loading-message {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    progress {
+        width: 80%;
+        height: 20px;
+        margin: 10px 0;
+    }
+
   </style>
 </head>
 
 <body>
+    <section style="padding-top: 4%; margin-bottom:4%">
+        <div class="container" style="margin-top: 0%;">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="section-title">
+                        <h1>Point cloud Editor<a href="https://github.com/JohannesKrueger/pointcloudeditor" target="_blank"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub Logo" class="github-logo"></a></h1>
+                        <a href="#tutorial"class="tutorial-link">(Tutorial)</a>
+                    </div>
+                    <p>The Free Point cloud Editor allows you to edit, crop and export any Point cloud files with a userfriendly Interface. This makes it possible to remove Points and clean the point cloud before processing the Point cloud in Colmap, Gaussian Splatting, Nerfs etc. optimizing the point cloud and archive better results and 3D reconstructions. Your can also translate and rotate Colmap Pointclouds and export the adjusted images.txt and points3D.txt.</p>
+                    <p>This opensource Editor is compatible with the [.txt] Data exported from Colmap reconstructions and runs in the browser.</p>       
+                </div>
+                <div class="col-lg-6">
+                    <img src="../../img/Pointcloud-Editor.webp" alt="Point cloud editor - Panoton" width="100%" height="100%" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script src="script.js"></script>
     <main>
         <div id="rendererContainer" style="position: relative; width: auto; height: auto; border: 5px solid #015DE4;">
@@ -170,6 +209,44 @@
             </div>
         </div>
     </main>
+
+    <div id="loading-overlay">
+        <div id="loading-spinner"></div>
+        <div id="loading-message">Processing Data... This might take a few seconds depending on the file size</div>
+        <div>
+            <p>Processing Points3D</p>
+            <progress id="points-progress" value="0" max="100"></progress>
+        </div>
+        <div>
+            <p>Processing Images</p>
+            <progress id="images-progress" value="0" max="100"></progress>
+        </div>
+    </div>
+
+  <main>
+    <div class="container">
+        <div class="footer__top">
+            <div id="tutorial" class="row">
+                <div class="section-title" style="width: 100%; margin-top: 5%">
+                    <h2>Tutorial</h2>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <legend>Upload Point cloud</legend>
+                  <p>At first, upload a Point cloud file in [.txt] format (For Example the points3D.txt from Colmap) to the "Input" field. If you want to rotate or translate the pointcloud make sure to import the cameras.txt and images.txt file as well to copy the same rotations and translations as the pointcloud. Loading the files in the Scene might take a few seconds depending on the file size.</p>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <legend>Edit</legend>
+                  <p>In the Settings area you can make changes to the Point cloud. Rotate and Translate it with left and right click. Edit the Point cloud by adjusting the Sphere Crop Radius and manually remove points with the Eraser Tool. All removed Points are colored in Red. Translate and Rotate the Colmap Scene by changing the Values of the Translation and Rotation.</p>
+                </div>
+                  <div class="col-lg-4 col-md-4">
+                  <legend>Download</legend>
+                  <p>You can download the edited Point cloud file in [.txt] format without the Red colored Points directly by clicking the download button. Depending on the size of your imported Data, this might take a few seconds to apply and write the modified filed. Make sure to rename the downloaded Files correcly to (points3D.txt or images.txt) to be recognized by Colmap</p>
+                </div>   
+            </div>
+        </div>
+    </div>
+  </main>
+
 <style>
     #rendererContainer {
         position: relative; /* Ensures absolute positioning inside it is relative to this container */
@@ -410,7 +487,6 @@
     }
 
     .range-slider input[type="range"] {
-        /* Standard styling for all browsers */
         width: 50px; /* Slider takes the full width of its container */
         height: 8px; /* Sets a fixed height for the slider */
         background: #015DE4; /* Background color for the slider */
@@ -487,17 +563,102 @@
         padding-left: 10px; /* Ensures some space between line numbers and code */
         border-left: 1px solid #ccc; /* Adds a visual separator */
     }
-
-
-
-
 </style>
+
+   <section >
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <span>Need Help?</span>
+                        <h2>FAQ</h2>
+                    </div>
+                    <div class="services__item">
+                        <div class="faq">
+                            <details>
+                                <summary class= "faq-sum faq-text">What's the correct Input Point cloud file format?</summary>
+                                <p class= "faq-text" >The imported point cloud file must be in [.txt] format. Make sure to only import the point cloud file (mostly named: points3D.txt) instead of the camera or images file. This file has the following format, when opening it in any text editor:</p>
+                                <div class="code-container">
+                                    <ul class="line-numbers">
+                                        <li>1</li>
+                                        <li>2</li>
+                                        <li>3</li>
+                                        <li>4</li>
+                                        <li>5</li>
+                                    </ul>
+                                    <ul class="code-lines">
+                                        <li># 3D point list with one line of data per point:</li>
+                                        <li>#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, TRACK[] as (IMAGE_ID, POINT2D_IDX)</li>
+                                        <li># Number of points: 105304, mean track length: 6.5531545003348528</li>
+                                        <li>1 -2.6375808715820312 -3.159113645553589 5.8599467277526855 171 162 157 0.7627250660295559 19 56 747 4076 746 4081</li>
+                                        <li>70489 -4.174145698547363 -0.19272787868976593 3.1809439659118652 149 150 152 0.342557520656781 70 5979 1071 4075 1072 ...</li>
+                                    </ul>
+                                </div>
+                            </details>
+                        </div>
+                        <div class="faq">
+                            <details>
+                                <summary class= "faq-sum faq-text">How to archieve a Point cloud file in [.txt] format?</summary>
+                                <p class= "faq-text" >You can use for example <a style="color : #015DE4;" href="https://colmap.github.io/">Colmap</a> to calculate a Point cloud file. If this is in [.bin] format, convert it to [.txt] format by using Colmap >> Export to txt</p>
+                            </details>
+                        </div>
+                        <div class="faq">
+                            <details>
+                                <summary class="faq-sum faq-text">How to edit the Point cloud in Panoton Point cloud Editor?</summary>
+                                <p class="faq-text">
+                                    Editing a point cloud in the Panoton Point cloud Editor involves several key features designed to make the process intuitive and efficient. Here’s how you can get started and make the most of the tool:
+                                    </br>
+                                    <strong>1. Upload Your Point cloud:</strong> Begin by uploading your point cloud file using the 'Upload Point cloud File' button. Supported formats include .txt files that are formatted for 3D coordinates.
+                                    </br>
+                                    <strong>2. Adjust Viewing Parameters:</strong> Use the navigation tools to rotate, zoom, and pan across your point cloud. This will help you view the point cloud from various angles and inspect details closely.
+                                    </br>
+                                    <strong>3. Set the Crop Radius:</strong> If you need to focus on a specific area, adjust the 'Crop Radius' slider. This allows you to hide points that are outside a certain radius from the center, focusing on a more specific segment of your point cloud.
+                                    </br>
+                                    <strong>4. Toggle Erase Mode:</strong> Activate the 'Erase Mode' by switching the toggle next to 'Toggle Eraser'. In this mode, you can click or drag over points to erase them. This is useful for cleaning up noise or removing unwanted points from your dataset.
+                                    </br>
+                                    <strong>5. Download Your Edited Point cloud:</strong> Once you are satisfied with your edits, you can download the modified point cloud by clicking the 'Download Points' button. This will save your changes to a new file, preserving the original data.
+                                    </br>
+                                    For more detailed instructions and additional features, refer to the Tutorial in the 'Help' section or contact us (info@panoton.de) for further assistance.
+                                </p>
+                            </details>
+                        </div>
+                        <div class="faq">
+                            <details>
+                                <summary class="faq-sum faq-text">Use Cases for the Point cloud Editor</summary>
+                                <p class="faq-text">
+                                    The Panoton Point cloud Editor is designed to enhance and simplify the manipulation of various types of point clouds, offering robust tools tailored for specific needs in industries like gaming, architecture, geospatial planning, and more. Here are some key use cases for this editor:
+                                    </br>
+                                    <strong>1. COLMAP Point Clouds:</strong>
+                                    For users working with photogrammetry and 3D reconstruction, the editor provides tools to refine COLMAP point clouds. By allowing users to erase outliers and adjust density via cropping tools, the editor helps in cleaning up noise and improving the accuracy before exporting the data for 3D modeling or further processing.
+                                    </br>
+                                    <strong>2. Gaussian Splat Point Clouds:</strong>
+                                    Gaussian splatting involves rendering point clouds with a smoothing effect to create a continuous surface. Before this process, our point cloud editor can be used to selectively edit and remove unwanted points, optimize the distribution, and modify radius parameters to achieve better visualization results in visualization software.
+                                    </br>
+                                    <strong>3. Architectural Visualization:</strong>
+                                    Architects and designers can use the editor to manipulate scanned point clouds of buildings or construction sites. This helps in refining structural data, removing unnecessary points like moving objects or foliage, and preparing cleaner models for CAD applications.
+                                    </br>
+                                    <strong>4. Geospatial Data Handling:</strong>
+                                    Geospatial analysts can benefit from the tool’s ability to manage and edit large-scale terrain data. The editor allows for the precise adjustment of elevation points, removal of anomalies, and enhances data sets for use in urban planning and landscape analysis.
+                                    </br>
+                                    <strong>5. Game Development:</strong>
+                                    Game developers can use the editor to sculpt and tweak point clouds for environmental assets. Ensuring the optimal level of detail and cleaning up artifacts to create immersive game worlds is facilitated by the editor’s intuitive interface and powerful editing capabilities.
+                                    </br>
+                                    These use cases demonstrate the versatility of the Panoton Point cloud Editor, making it an indispensable tool for professionals seeking to enhance their point cloud data for various applications.
+                                </p>
+                            </details>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </body>
 
-</footer>
 <!-- Footer Section End -->
 
-<style type="text/css">
+<script type="text/css">
   @media screen and  (max-width: 600px) {
     #cubemap {
       width: 324px;
@@ -522,7 +683,7 @@
       height: 603px;
     }
   }
-</style>
+</script>
 
 <script>
     function updateCubeRotation(value) {
@@ -550,15 +711,5 @@
         }
     });
 </script>
-
-
-<!-- Js Plugins -->
-<script src="../../js/jquery-3.3.1.min.js"></script>
-<script src="../../js/bootstrap.min.js"></script>
-<script src="../../js/jquery.slicknav.js"></script>
-<script src="../../js/owl.carousel.min.js"></script>
-<script src="../../js/slick.min.js"></script>
-<script src="../../js/main.js"></script>
-<script src="../../js/getdata.js"></script>
 
 </html>
