@@ -11,6 +11,8 @@ Check out the live demo of the Point Cloud Editor [here](https://www.panoton.de/
 - **Flexible Export Options**: Export modified point cloud and image data in the correct format for seamless integration into your workflow.
 - **Cropping Editing Feature**: Crop point cloud data to focus on specific areas of interest.
 
+![Pointcloud_Editor](https://github.com/JohannesKrueger/pointcloudeditor/assets/68600106/a7a02c22-d1b3-43a2-88e9-abf0d415b232)
+
 ## Limitations
 - **Performance**: The current implementation might struggle with extremely large point cloud datasets due to browser memory constraints.
 - **Limited Editing Tools**: The editor currently supports basic translation and rotation. More advanced editing features are planned for future updates.
