@@ -1,7 +1,35 @@
 # Pointcloud Editor
 
 ## Demo Link
-Check out the live demo of the Pointcloud Editor [here](#).
+Check out the live demo of the Pointcloud Editor [here](https://www.panoton.de/tools/pointcloud-editor/index.php).
+
+## Highlights
+- **Intuitive 3D Pointcloud Editing**: Easily visualize and manipulate 3D Colmap pointclouds with simple translation and rotation tools.
+- **Real-time Updates**: Immediate feedback and visualization of changes made to the pointcloud.
+- **Transformation Tracking**: Accurate tracking and application of all transformations to ensure consistency between visualization and exported files.
+- **Support for Camera and Image Data**: Import and visualize camera and image data alongside the pointcloud for a comprehensive editing experience.
+- **Flexible Export Options**: Export modified pointcloud and image data in the correct format for seamless integration into your workflow.
+
+## Limitations
+- **Performance**: The current implementation might struggle with extremely large pointcloud (points3D.txt) datasets due to browser memory constraints.
+- **Limited Editing Tools**: The editor currently supports basic translation and rotation. More advanced editing features are planned for future updates.
+- **Browser Compatibility**: While the tool works well in modern browsers, some older browsers may not support all features due to WebGL limitations.
+
+## Future Work
+- **Enhanced Performance**: Implementing optimizations to handle very large datasets efficiently.
+- **Advanced Editing Tools**: Adding more tools for detailed editing, such as point selection, deletion, and custom transformations.
+- **Extended File Format Support**: Expanding support to include more pointcloud and image data formats.
+- **Collaboration Features**: Enabling real-time collaborative editing of pointclouds.
+- **User Authentication**: Adding user authentication and personalized settings for a more tailored experience.
+
+## Usage
+
+### Prerequisites
+Ensure you have a modern web browser that supports WebGL (e.g., Chrome, Firefox, Edge).
+# Pointcloud Editor
+
+## Demo Link
+Check out the live demo of the Pointcloud Editor [here](https://www.panoton.de/tools/pointcloud-editor/index.php).
 
 ## Highlights
 - **Intuitive 3D Pointcloud Editing**: Easily visualize and manipulate 3D pointclouds with simple translation and rotation tools.
@@ -9,6 +37,7 @@ Check out the live demo of the Pointcloud Editor [here](#).
 - **Transformation Tracking**: Accurate tracking and application of all transformations to ensure consistency between visualization and exported files.
 - **Support for Camera and Image Data**: Import and visualize camera and image data alongside the pointcloud for a comprehensive editing experience.
 - **Flexible Export Options**: Export modified pointcloud and image data in the correct format for seamless integration into your workflow.
+- **Cropping Editing Feature**: Crop pointcloud data to focus on specific areas of interest.
 
 ## Limitations
 - **Performance**: The current implementation might struggle with extremely large pointcloud datasets due to browser memory constraints.
@@ -21,6 +50,7 @@ Check out the live demo of the Pointcloud Editor [here](#).
 - **Extended File Format Support**: Expanding support to include more pointcloud and image data formats.
 - **Collaboration Features**: Enabling real-time collaborative editing of pointclouds.
 - **User Authentication**: Adding user authentication and personalized settings for a more tailored experience.
+- **Scaling Function**: Allow users to select two points and enter the real-world distance between them to scale the entire scene accurately.
 
 ## Usage
 
@@ -30,7 +60,7 @@ Ensure you have a modern web browser that supports WebGL (e.g., Chrome, Firefox,
 ### Setup
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/pointcloud-editor.git
+    git clone https://github.com/JohannesKrueger/pointcloud-editor.git
     cd pointcloud-editor
     ```
 
@@ -45,49 +75,20 @@ Ensure you have a modern web browser that supports WebGL (e.g., Chrome, Firefox,
 1. Use the translation sliders (`X`, `Y`, `Z`) to move the pointcloud.
 2. Use the rotation sliders (`X`, `Y`, `Z`) to rotate the pointcloud.
 3. Toggle erase mode to remove unwanted points by clicking on them.
+4. Use the sphere radius slider to crop the pointcloud to a specific region.
 
 ### Exporting
 1. Click on the "Download Points" button to export the modified pointcloud data (`modifiedPoints3D.txt`).
 2. If images were imported, a modified images file (`modifiedImages.txt`) will also be prepared for download.
 
-## Code Structure
-The project is structured as follows:
+## COLMAP Installation and Conversion
 
-- **index.html**: The main HTML file containing the UI structure and elements.
-- **style.css**: CSS file for styling the application.
-- **script.js**: JavaScript file containing the core functionality of the Pointcloud Editor.
+### Ensure COLMAP is installed and added to your environment variables PATH
 
-### JavaScript Structure
+#### Windows
+```bash
+colmap model_converter --input_path /path/to/input_model_folder --output_path /path/to/output_model_folder --output_type TXT
 
-#### Initialization
-- **Scene Setup**: Initializes the 3D scene, camera, and renderer.
-- **Controls**: Sets up the OrbitControls for navigating the 3D space.
-
-#### Event Listeners
-- **File Upload**: Handles the uploading and parsing of pointcloud, camera, and image data files.
-- **Transformations**: Listeners for translation and rotation inputs to apply transformations in real-time.
-
-#### Core Functions
-- **loadPoints()**: Parses and loads the pointcloud data.
-- **loadCameras()**: Parses and loads the camera data.
-- **loadImages()**: Parses and processes the image data.
-- **applyTranslation()**: Applies translation to the pointcloud and tracks the transformation.
-- **applyRotation()**: Applies rotation to the pointcloud and tracks the transformation.
-- **applyTransformations()**: Updates the transformations applied to the pointcloud and other objects in the scene.
-- **renderPoints()**: Renders the pointcloud in the scene.
-- **processPoints()**: Processes and exports the modified pointcloud data.
-
-#### Helper Functions
-- **logToConsole()**: Logs messages to the on-screen console.
-- **coloruploaddivs()**: Updates the UI to reflect the status of uploaded files.
-- **createCameraMarker()**: Creates visual markers for camera positions.
-- **applySphereCrop()**: Applies a spherical crop to the pointcloud for editing.
-
-## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request for any improvements or bug fixes.
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ![Pointcloud_Editor](https://github.com/JohannesKrueger/pointcloudeditor/assets/68600106/a7a02c22-d1b3-43a2-88e9-abf0d415b232)
 
