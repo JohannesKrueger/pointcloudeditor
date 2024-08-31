@@ -516,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let points2DData = [];
         let leftoverLine = '';
         const totalImages = imageChunks.length;
+        const imageRegex = /^\d+ .*?\.(jpg|png)\s*$/;
 
         const processImages = async () => {
             for (let chunkIndex = 0; chunkIndex < imageChunks.length; chunkIndex++) {
@@ -532,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (i === lines.length - 1 && line.charAt(line.length - 1) !== '\n') {
                         leftoverLine = line;
                     } else {
-                        if (line.match(/^\d+ /)) {
+                        if (line.match(imageRegex)) {
                             imageData.push(line);
                         } else {
                             points2DData.push(line);
