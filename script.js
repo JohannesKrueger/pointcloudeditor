@@ -392,24 +392,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const radiusValueDisplay = document.getElementById('radiusValue');
     let sphereRadius = parseFloat(sphereRadiusSlider.value);
 
+    let cropSphere = new THREE.Mesh(
+        new THREE.SphereGeometry(sphereRadius, 64, 64),
+        new THREE.MeshBasicMaterial({ color: 0x90EE90, wireframe: true }) // Changed color to #90EE90
+    );
+    scene.add(cropSphere);
+
     sphereRadiusSlider.addEventListener('input', function() {
-        sphereRadius = parseFloat(this.value);
-        radiusValueDisplay.textContent = sphereRadius;
+        sphereRadius = parseFloat(this.value) * 0.5; // Scaling adjusted to be slower
+        radiusValueDisplay.textContent = sphereRadius.toFixed(2); // Adjust display for better precision
         updateCropSphereRadius(sphereRadius);
         applySphereCrop();
     });
 
     function updateCropSphereRadius(newRadius) {
         cropSphere.geometry.dispose();
-        const newGeometry = new THREE.SphereGeometry(newRadius, 64, 64);
-        const newWireframe = new THREE.WireframeGeometry(newGeometry);
-        cropSphere.geometry = newWireframe;
+        cropSphere.geometry = new THREE.SphereGeometry(newRadius, 64, 64);
+        cropSphere.visible = true; // Ensure it is visible when updated
     }
 
     function applySphereCrop() {
+        if (!pointsMesh) return;
+
         const attributes = pointsMesh.geometry.attributes;
         const positions = attributes.position.array;
         const colors = attributes.color.array;
+
         for (let i = 0; i < positions.length; i += 3) {
             const x = positions[i];
             const y = positions[i + 1];
@@ -417,6 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const distanceFromCenter = Math.sqrt(x * x + y * y + z * z);
             const colorIndex = i;
             if (distanceFromCenter > sphereRadius) {
+                // Set out-of-bounds points to red
                 colors[colorIndex] = 1;
                 colors[colorIndex + 1] = 0;
                 colors[colorIndex + 2] = 0;
